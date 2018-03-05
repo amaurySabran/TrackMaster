@@ -16,7 +16,7 @@ class TrackEnv(gym.Env):
                  sensor_limit=0.3,
                  max_car_acceleration=0.005,
                  max_car_speed=0.02,
-                 max_car_deviation_angle=np.pi / 10,
+                 max_car_deviation_angle=np.pi / 5,
                  car_width=0.015,
                  car_length=0.03,
                  max_clock_time=1000):
@@ -130,19 +130,19 @@ class TrackEnv(gym.Env):
         current_quad = self.get_quad(self.car_checkpoint)
         previous_quad = self.get_quad(self.car_checkpoint - 1)
         next_quad = self.get_quad(self.car_checkpoint + 1)
-        reward = 0
+        reward = -0.1
         if is_in_quad(self.car_position, previous_quad):
             self.car_checkpoint -= 1
             reward = -1
         elif is_in_quad(self.car_position, next_quad):
             self.car_checkpoint += 1
-            reward = 1
+            reward = 5
 
         new_state = self.observation()
         done = (self.clock_time > self.max_clock_time) or (None in new_state)
         info = {'time': self.clock_time}  # we don't need this now
         if None in new_state:
-            reward = -10
+            reward = -20
         return new_state, reward, done, info
 
     def render(self, mode='human'):
@@ -175,7 +175,8 @@ class TrackEnv(gym.Env):
 
     def reset(self):
         self.clock_time = 0
-        self.car_checkpoint = np.random.randint(self.nb_checkpoints)
+        #self.car_checkpoint = np.random.randint(self.nb_checkpoints)
+        self.car_checkpoint = 0
         quad = self.get_quad(self.car_checkpoint)
         self.car_position = (quad[0, 0] + quad[0, 1] + quad[1, 0] + quad[1, 1]) / 4*(1+np.random.rand(2)/100)
         car_direction = (quad[0, 1] + quad[1, 1] - quad[0, 0] - quad[1, 0]) / 2*(1+np.random.rand(2)/100)
