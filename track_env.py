@@ -12,10 +12,10 @@ plt.ion()
 
 class TrackEnv(gym.Env):
     def __init__(self, track_file,
-                 nb_sensors=3,
+                 nb_sensors=2,
                  sensor_limit=0.3,
-                 max_car_acceleration=0.01,
-                 max_car_speed=0.01,
+                 max_car_acceleration=0.005,
+                 max_car_speed=0.02,
                  max_car_deviation_angle=np.pi / 10,
                  car_width=0.015,
                  car_length=0.03,
@@ -177,8 +177,8 @@ class TrackEnv(gym.Env):
         self.clock_time = 0
         self.car_checkpoint = np.random.randint(self.nb_checkpoints)
         quad = self.get_quad(self.car_checkpoint)
-        self.car_position = (quad[0, 0] + quad[0, 1] + quad[1, 0] + quad[1, 1]) / 4 + np.random.rand(2)*0.01
-        car_direction = (quad[0, 1] + quad[1, 1] - quad[0, 0] - quad[1, 0]) / 2 + np.random.rand(2)*0.01
+        self.car_position = (quad[0, 0] + quad[0, 1] + quad[1, 0] + quad[1, 1]) / 4*(1+np.random.rand(2)/100)
+        car_direction = (quad[0, 1] + quad[1, 1] - quad[0, 0] - quad[1, 0]) / 2*(1+np.random.rand(2)/100)
         self.car_speed = normalize(car_direction)*self.max_car_speed*np.random.rand()
         return self.observation()
 
