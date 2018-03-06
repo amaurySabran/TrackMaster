@@ -12,7 +12,7 @@ plt.ion()
 
 class TrackEnv(gym.Env):
     def __init__(self, track_file,
-                 nb_sensors=2,
+                 nb_sensors=3,
                  sensor_limit=0.3,
                  max_car_acceleration=0.005,
                  max_car_speed=0.02,
@@ -43,7 +43,7 @@ class TrackEnv(gym.Env):
             a = self.track
             self.track = np.zeros((2, self.track.shape[1] + 1, 2))
             self.track[:, :-1, :] = a
-            self.track[:, -1, :] = a[0]
+            self.track[:, -1, :] = a[:,0,:]
 
         ##  ENV PARAMETERS
         self.nb_checkpoints = self.track.shape[1] - 1
@@ -133,7 +133,7 @@ class TrackEnv(gym.Env):
         reward = -0.1
         if is_in_quad(self.car_position, previous_quad):
             self.car_checkpoint -= 1
-            reward = -1
+            reward = -10
         elif is_in_quad(self.car_position, next_quad):
             self.car_checkpoint += 1
             reward = 5
@@ -142,7 +142,7 @@ class TrackEnv(gym.Env):
         done = (self.clock_time > self.max_clock_time) or (None in new_state)
         info = {'time': self.clock_time}  # we don't need this now
         if None in new_state:
-            reward = -20
+            reward = -30
         return new_state, reward, done, info
 
     def render(self, mode='human'):
@@ -175,12 +175,12 @@ class TrackEnv(gym.Env):
 
     def reset(self):
         self.clock_time = 0
-        #self.car_checkpoint = np.random.randint(self.nb_checkpoints)
-        self.car_checkpoint = 0
+        self.car_checkpoint = np.random.randint(self.nb_checkpoints)
+        # self.car_checkpoint = 0
         quad = self.get_quad(self.car_checkpoint)
-        self.car_position = (quad[0, 0] + quad[0, 1] + quad[1, 0] + quad[1, 1]) / 4*(1+np.random.rand(2)/100)
-        car_direction = (quad[0, 1] + quad[1, 1] - quad[0, 0] - quad[1, 0]) / 2*(1+np.random.rand(2)/100)
-        self.car_speed = normalize(car_direction)*self.max_car_speed*np.random.rand()
+        self.car_position = (quad[0, 0] + quad[0, 1] + quad[1, 0] + quad[1, 1]) / 4
+        car_direction = (quad[0, 1] + quad[1, 1] - quad[0, 0] - quad[1, 0]) / 2
+        self.car_speed = normalize(car_direction)*self.max_car_speed/2
         return self.observation()
 
     def close(self):

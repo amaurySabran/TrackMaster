@@ -6,9 +6,9 @@ from phazlib.utils import ShowVariableLogger
 
 env = TrackEnv(track_file='tracks/track_0.npy')
 
-agent = SarsaLearner(env=env,
+agent = QLearner(env=env,
                      logger=ShowVariableLogger(average_window=100),
-                     boxes_resolution=(5, 5, 5, 5, 5, 5, 4, 4))
+                     boxes_resolution=(5,5,5,5,5,5,5,5,3,3))
 
 agent.train(nb_episodes=4000)
 
