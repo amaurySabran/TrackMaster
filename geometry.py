@@ -18,7 +18,7 @@ def rotate90(v):
 
 
 def direct_order(v0, v1, v2):
-    if v2.dot(rotate90(v0)) > 0:
+    if v2.dot(rotate90(v0)) >= 0:
         return v1.dot(rotate90(v0)) > 0 and v1.dot(rotate90(v2)) <= 0
     else:
         return not(direct_order(v2, v1, v0))
